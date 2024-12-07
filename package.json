@@ -13,10 +13,10 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
-		"@fastify/cors": "^8.4.1",
-		"@supabase/supabase-js": "^2.38.4",
-		"fastify": "^4.24.3",
-		"dotenv": "^16.3.1",
+		"@fastify/cors": "8.5.0",
+		"@supabase/supabase-js": "2.47.1",
+		"fastify": "4.29.0",
+		"dotenv": "16.4.7",
 		"typescript": "^5.2.2"
 	},
 	"devDependencies": {
