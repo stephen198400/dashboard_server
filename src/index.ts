@@ -80,11 +80,6 @@ async function registerHooks(): Promise<void> {
 }
 
 async function registerRoutes(): Promise<void> {
-	// 添加预检请求处理
-	server.options('*', async (request, reply) => {
-		reply.code(204).send();
-	});
-
 	// Root route
 	server.get('/', async () => {
 		return {
