@@ -26,12 +26,24 @@ const supabase = createClient(
 // Register plugins
 async function registerPlugins(): Promise<void> {
 	await server.register(cors, {
-		origin: true, // Adjust this according to your frontend domain
+		origin: true,
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization'],
+		credentials: true,
 	});
 }
 
 // Register routes
 async function registerRoutes(): Promise<void> {
+	// Root route
+	server.get('/', async () => {
+		return {
+			status: 'ok',
+			message: 'Supabase Admin Server is running',
+			timestamp: new Date().toISOString(),
+		};
+	});
+
 	// add user
 	server.post<{
 		Body: CreateUserBody;
