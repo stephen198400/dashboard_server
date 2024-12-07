@@ -23,17 +23,34 @@ const supabase = createClient(
 
 // Register plugins
 async function registerPlugins(): Promise<void> {
-	// 更新 CORS 配置
+	// 允许的基础域名列表（不包含 *.vercel.app）
+	const allowedOrigins = [
+		'http://localhost:3000',
+		'http://localhost:5173',
+		'https://testmytest.com',
+		'https://www.testmytest.xyz',
+		'https://testmytest.xyz',
+		'https://dashboard-server-cfty.onrender.com',
+	];
+
 	await server.register(cors, {
-		origin: [
-			'http://localhost:3000',
-			'http://localhost:5173',
-			'https://testmytest.com',
-			'https://*.vercel.app',
-			'https://www.testmytest.xyz',
-			'https://testmytest.xyz',
-			'https://dashboard-server-cfty.onrender.com',
-		],
+		origin: (origin, cb) => {
+			// 非浏览器环境（如curl测试）可能没有origin
+			if (!origin) {
+				return cb(null, true);
+			}
+
+			// 检查是否匹配 vercel 子域名
+			const isVercel = origin.endsWith('.vercel.app');
+			// 检查列表中是否存在当前origin
+			const isAllowed = allowedOrigins.includes(origin);
+
+			if (isAllowed || isVercel) {
+				cb(null, true);
+			} else {
+				cb(new Error('Not allowed by CORS'), false);
+			}
+		},
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
 		exposedHeaders: ['Content-Range', 'X-Content-Range'],
@@ -44,41 +61,14 @@ async function registerPlugins(): Promise<void> {
 	});
 }
 
-// 修改全局钩子处理
+// 如果 `registerHooks()` 仅用于CORS相关配置，可不需要该函数
+// 如果还有其他hook逻辑，可保留，但请确保不再重复设置CORS相关header
 async function registerHooks(): Promise<void> {
-	server.addHook('onRequest', async (request, reply) => {
-		// 允许所有来源，或者使用具体的域名列表
-		const allowedOrigins = [
-			'http://localhost:3000',
-			'http://localhost:5173',
-			'https://testmytest.com',
-			'https://*.vercel.app',
-			'https://www.testmytest.xyz',
-			'https://testmytest.xyz',
-			'https://dashboard-server-cfty.onrender.com',
-		];
-
-		const origin = request.headers.origin;
-		if (
-			origin &&
-			allowedOrigins.some((allowed) =>
-				allowed.includes('*')
-					? origin.endsWith(allowed.replace('*', ''))
-					: origin === allowed
-			)
-		) {
-			reply.header('Access-Control-Allow-Origin', origin);
-		}
-
-		reply.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-		reply.header(
-			'Access-Control-Allow-Headers',
-			'Content-Type, Authorization, Origin, Accept'
-		);
-		reply.header('Access-Control-Allow-Credentials', 'true');
-	});
+	// 如果您还有其他全局Hook逻辑，可在此添加
+	// 当前不需要添加CORS相关的onRequest Hook了
 }
 
+// 定义路由
 async function registerRoutes(): Promise<void> {
 	// Root route
 	server.get('/', async () => {
@@ -89,13 +79,12 @@ async function registerRoutes(): Promise<void> {
 		};
 	});
 
-	// add user with improved logging
+	// add user route
 	server.post<{
 		Body: CreateUserBody;
 		Reply: CreateUserResponse;
 	}>('/users', async (request, reply) => {
 		const { email, password } = request.body;
-
 		server.log.info('Received create user request');
 
 		try {
@@ -120,18 +109,16 @@ async function registerRoutes(): Promise<void> {
 		}
 	});
 
-	// delete user with improved logging
+	// delete user route
 	server.delete<{
 		Params: { id: string };
 		Reply: { success: boolean; error?: string };
 	}>('/users/:id', async (request, reply) => {
 		const { id } = request.params;
-
 		server.log.info(`Received delete request for user ID: ${id}`);
 
 		try {
 			const { error } = await supabase.auth.admin.deleteUser(id);
-
 			if (error) {
 				server.log.error(`User deletion error: ${error.message}`);
 				throw error;
