@@ -31,7 +31,8 @@ async function registerPlugins(): Promise<void> {
 			'http://localhost:5173',
 			'https://testmytest.com',
 			'https://*.vercel.app',
-			'https://dashboard-neon-chi.vercel.app',
+			'https://www.testmytest.xyz', // 添加实际生产域名
+			'https://testmytest.xyz', // 添加无 www 版本
 		],
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
