@@ -26,7 +26,12 @@ const supabase = createClient(
 // Register plugins
 async function registerPlugins(): Promise<void> {
 	await server.register(cors, {
-		origin: true,
+		origin: [
+			'http://localhost:3000', // 本地开发环境
+			'http://localhost:5173', // Vite 默认端口
+			'https://testmytest.com', // Vercel 生产环境
+			'https://*.vercel.app', // Vercel 预览环境（可选）
+		],
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
 		credentials: true,
@@ -75,6 +80,10 @@ async function registerRoutes(): Promise<void> {
 		Params: { id: string };
 		Reply: { success: boolean; error?: string };
 	}>('/users/:id', async (request, reply) => {
+		server.log.info(
+			`Received DELETE request for user ID: ${request.params.id}`
+		);
+
 		const { id } = request.params;
 
 		try {
