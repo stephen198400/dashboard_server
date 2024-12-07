@@ -9,17 +9,20 @@ importers:
   .:
     dependencies:
       '@fastify/cors':
-        specifier: ^8.4.1
+        specifier: 8.5.0
         version: 8.5.0
       '@supabase/supabase-js':
-        specifier: ^2.38.4
+        specifier: 2.47.1
         version: 2.47.1
       dotenv:
-        specifier: ^16.3.1
+        specifier: 16.4.7
         version: 16.4.7
       fastify:
-        specifier: ^4.24.3
+        specifier: 4.29.0
         version: 4.29.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.7.2
     devDependencies:
       '@types/node':
         specifier: ^20.8.9
@@ -33,9 +36,6 @@ importers:
       tsx:
         specifier: ^3.14.0
         version: 3.14.0
-      typescript:
-        specifier: ^5.2.2
-        version: 5.7.2
 
 packages:
 
