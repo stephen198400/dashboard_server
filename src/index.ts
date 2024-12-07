@@ -27,10 +27,11 @@ const supabase = createClient(
 async function registerPlugins(): Promise<void> {
 	await server.register(cors, {
 		origin: [
-			'http://localhost:3000', // 本地开发环境
-			'http://localhost:5173', // Vite 默认端口
-			'https://testmytest.com', // Vercel 生产环境
-			'https://*.vercel.app', // Vercel 预览环境（可选）
+			'http://localhost:3000',
+			'http://localhost:5173',
+			'https://testmytest.com',
+			'https://*.vercel.app',
+			'https://dashboard-neon-chi.vercel.app',
 		],
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization'],
