@@ -4,6 +4,9 @@
 	"description": "Fastify server for Supabase admin operations",
 	"main": "dist/index.js",
 	"type": "module",
+	"engines": {
+		"node": ">=18.0.0"
+	},
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"build": "tsc",
@@ -13,12 +16,12 @@
 		"@fastify/cors": "^8.4.1",
 		"@supabase/supabase-js": "^2.38.4",
 		"fastify": "^4.24.3",
-		"dotenv": "^16.3.1"
+		"dotenv": "^16.3.1",
+		"typescript": "^5.2.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20.8.9",
 		"tsx": "^3.14.0",
-		"typescript": "^5.2.2",
 		"@typescript-eslint/parser": "^6.9.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.0"
 	}
